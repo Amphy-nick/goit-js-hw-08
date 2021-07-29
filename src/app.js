@@ -63,3 +63,58 @@ const galleryItems = [
     description: 'Lighthouse Coast Sea',
   },
 ];
+
+const refs = {
+    gallery: document.querySelector('.gallery'),
+    modal: document.querySelector('.js-lightbox'),
+    modalOverlay: document.querySelector('.lightbox__overlay'),
+    galleryImage: document.querySelector('.lightbox__image'),
+    modalButtonClose: document.querySelector('button[data-action="close-lightbox"]')
+}
+
+const createImageMarkUp = ({ preview, original, description }) => {
+  return `<li class="gallery__item">
+  <a
+    class="gallery__link"
+  >
+    <img
+      class="gallery__image"
+      src='${preview}'
+      data-source="${original}"
+      alt="${description}"
+    />
+  </a>
+</li>`
+};
+
+const result = galleryItems.map(createImageMarkUp).join('');
+
+refs.gallery.insertAdjacentHTML('afterbegin', result);
+refs.gallery.addEventListener('click', modalOpen);
+refs.modalButtonClose.addEventListener('click', modalClose);
+refs.modalOverlay.addEventListener('click', modalCloseBackdrop);
+
+
+function modalOpen(e) {
+  window.addEventListener('keydown', modalCloseESC);
+
+  refs.modal.classList.add('is-open');
+  refs.galleryImage.src = e.target.dataset['source'];
+}
+
+function modalClose(e) {
+  window.removeEventListener('keydown', modalCloseESC);
+
+  refs.modal.classList.remove('is-open');
+  refs.galleryImage.src = '';
+}
+
+function modalCloseBackdrop(e) {
+  modalClose();
+}
+
+function modalCloseESC(e) {
+    if (e.code === 'Escape') {
+      modalClose();
+    }
+}
